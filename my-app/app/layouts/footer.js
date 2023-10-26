@@ -9,12 +9,12 @@ const Footer = () => {
       <section className="ml-2">
         <h6 className="mb-smallest font-bold">Sitemap</h6>
         <ul className="text-left">
-          <ListLink href="/" content="fidasil" />
-          <ListLink href="/" content="fidasil" />
-          <ListLink href="/" content="fidasil" />
-          <ListLink href="/" content="fidasil" />
-          <ListLink href="/" content="fidasil" />
-          <ListLink href="/" content="fidasil" />
+          <ListLink href="/" content="Home" />
+          <ListLink href="/blog" content="Blog" />
+          <ListLink href="/about" content="About Us" />
+          <ListLink href="/contact" content="Contact" />
+          <ListLink href="/login" content="Login" />
+          <ListLink href="/register" content="Register" />
         </ul>
       </section>
       <section className="hidden sm:block">
@@ -31,19 +31,19 @@ const Footer = () => {
 
         <p>
           <FcHome className="inline mr-smallest" />
-          Bd Ypres 28, Brussels BE
+          your address, city
         </p>
       </section>
 
       <section>
         <h1 className="mb-smallest font-bold">refrences</h1>
         <ul>
-          <ListLink href="/" content="fidasil" />
-          <ListLink href="/" content="fidasil" />
-          <ListLink href="/" content="fidasil" />
-          <ListLink href="/" content="fidasil" />
-          <ListLink href="/" content="fidasil" />
-          <ListLink href="/" content="fidasil" />
+          <ListLink href="/" content="Sitemap" />
+          <ListLink href="/blog" content="Blog" />
+          <ListLink href="/about" content="About Us" />
+          <ListLink href="/contact" content="Contact" />
+          <ListLink href="/login" content="Login" />
+          <ListLink href="/register" content="Register" />
         </ul>
       </section>
     </main>

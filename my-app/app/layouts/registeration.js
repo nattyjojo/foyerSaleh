@@ -2,6 +2,7 @@
 import Header from "../components/header";
 import MainFooter from "../components/Footer";
 import { useState } from "react";
+import axios from "axios";
 
 const Registeration = () => {
   const [password, setPassword] = useState();
@@ -19,20 +20,36 @@ const Registeration = () => {
     phoneNumber: phoneNumber,
     email: email,
   };
+  const handleSubmit = async () => {
+    try {
+      const postdata = await axios.post(
+        "http://localhost:10000/register",
+        signUpData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const message = postdata.data.message;
+    } catch (err) {
+      //console.log(err);
+    }
+  };
 
   return (
     <>
       <Header />
 
-      <main className=" mb-[10rem] flex justify-center ">
+      <main className=" my-[5rem] flex justify-center ">
         <section>
-          <h1 className="font-bold text-big pt-[15rem]">Sign-Up :</h1>
+          <h1 className="font-bold text-big">Sign-Up :</h1>
 
           <form
             onSubmit={(event) => {
               event.preventDefault();
-
-              console.log(signUpData);
+              handleSubmit();
+              setSubmit(!subit);
             }}
             className=" border  rounded p-small"
           >
@@ -103,8 +120,7 @@ const Registeration = () => {
             <br></br>
             <div className="flex justify-around ">
               <button
-                type="reset"
-                onClick={() => setSubmit(!subit)}
+                type="submit"
                 className="border mt-small w-[40%] font-bold rounded px-smallest py-2 text-blue-500 hover:text-inherit hover:bg-blue-900"
               >
                 Submit

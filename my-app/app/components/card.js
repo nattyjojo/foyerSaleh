@@ -13,17 +13,17 @@ const Card = () => {
       onClick={() => setDisplayContent(!displayContent)}
       className={`${normalMenuStyle} ${
         displayContent ? dropDownMenustyle : ""
-      }`}
+      } mb-4 md:mb-0`}
     >
       <div>
         <h1 className="font-bold">Title</h1>
-        <Image src={"/assets/profile.jpg"} alt="im" width={100} height={100} />
+        {/* <Image src={""} alt="im" width={100} height={100} /> */}
       </div>
       <div className="flex justify-between font-bold text-[.70rem]">
         <p>time posted</p>
         <p>Posted By </p>
       </div>
-      <p>this a new mess for yo my friend </p>
+      <p>Resident new Post </p>
     </main>
   );
 };

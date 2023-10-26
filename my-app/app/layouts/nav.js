@@ -1,13 +1,19 @@
 import Link from "next/link";
 import Image from "next/image";
-import logo from "../assets/logo.png";
+import profile from "../assets/profile.jpg";
+import { GiHamburgerMenu } from "react-icons/gi";
 import HamburgerButton from "../clientsComponents/hamburger";
-const Nav = () => {
+const NavHamburger = () => {
   return (
-    <nav className="flex justify-between text-center font-bold py-smallest">
-      <Link href="/">BOYER FLASH</Link>
+    <nav className="flex justify-between fixed  top-0 left-0 py-smallest px-smallest border-b w-[100%] bg-black ">
+      <Link href={"/"}>
+        <Image src={profile} alt="foryer saleh logo" width={50} height={50} />
+      </Link>
       <HamburgerButton />
+      {/* <button className="text-small  ">
+        <GiHamburgerMenu />
+      </button> */}
     </nav>
   );
 };
-export default Nav;
+export default NavHamburger;

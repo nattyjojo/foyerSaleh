@@ -3,30 +3,35 @@ import Nav from "./layouts/nav";
 import Footer from "./layouts/footer";
 import Hero from "./components/hero";
 import Slide from "./layouts/slide";
+import Card from "./components/card";
 
 import MainFooter from "./components/Footer";
 import Header from "./components/header";
 export default function Home() {
   const style = {
-    card: "text-center mb-small rounded p-small font-bold text-small",
+    card: "text-center mb-small rounded p-small  font-bold text-small",
   };
   return (
     <main>
       {/* nav bar section */}
       <Header />
 
+      {/* 
       <section className="p-smallest pt-small">
-        {/* Hero section */}
+        Hero section 
         <section className={style.card}>
           <Hero />
         </section>
-        {/* slide section */}
+         slide section 
         <section className={style.card}>
           <Slide />
         </section>
-        <section className=" p-large mt-4">posts</section>
-        <section className=" p-larger mt-4">sponsors</section>
-      </section>
+        <section className=" md:flex md:justify-center  gap-3  md:flex-wrap">
+          <Card />
+        </section>
+      </section> 
+       */}
+
       <MainFooter />
     </main>
   );
