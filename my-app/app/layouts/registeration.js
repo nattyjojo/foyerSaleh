@@ -2,7 +2,8 @@
 import Header from "../components/header";
 import MainFooter from "../components/Footer";
 import { useState } from "react";
-import axios from "axios";
+import handleRegisteration from "../lib/handleRegisteration";
+import { useRouter } from "next/navigation";
 
 const Registeration = () => {
   const [password, setPassword] = useState();
@@ -10,9 +11,9 @@ const Registeration = () => {
   const [lastName, setLastName] = useState();
   const [phoneNumber, setPhoneNumber] = useState();
   const [email, setEmail] = useState();
-  const [subit, setSubmit] = useState(null);
-
+  const [submit, setSubmit] = useState(null);
   const [comfirmedPassword, setComfirmedPassword] = useState(null);
+
   const signUpData = {
     password: password,
     firstName: firstName,
@@ -20,22 +21,7 @@ const Registeration = () => {
     phoneNumber: phoneNumber,
     email: email,
   };
-  const handleSubmit = async () => {
-    try {
-      const postdata = await axios.post(
-        "http://localhost:10000/register",
-        signUpData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const message = postdata.data.message;
-    } catch (err) {
-      //console.log(err);
-    }
-  };
+  const router = useRouter();
 
   return (
     <>
@@ -46,28 +32,52 @@ const Registeration = () => {
           <h1 className="font-bold text-big">Sign-Up :</h1>
 
           <form
-            onSubmit={(event) => {
+            onSubmit={async (event) => {
               event.preventDefault();
-              handleSubmit();
-              setSubmit(!subit);
+              const handleRegisterationProcess = await handleRegisteration(
+                signUpData
+              );
+
+              if (handleRegisterationProcess) {
+                setSubmit(true);
+                router.push("/login");
+              } else {
+                setSubmit(false);
+                router.push("/login");
+              }
             }}
             className=" border  rounded p-small"
           >
             <h1 className="font-bold">Name</h1>
-
-            <p className={`text-[green] ${subit ? "block" : "hidden"} `}>
-              sign Up succesfull!
+            <p
+              className={`${
+                submit && submit === true
+                  ? "block text-[green]"
+                  : "" || submit === false
+                  ? "block text-[red]"
+                  : "" || submit === null
+                  ? "hidden"
+                  : ""
+              }`}
+            >
+              {submit && submit === true
+                ? "Registration Successfull!"
+                : "" || submit === false
+                ? "Account Exist, You Will Redirected To Login!"
+                : ""}
             </p>
             <div className="flex gap-smallest">
               <input
                 className=" w-[100%] rounded py-3 px-2"
                 placeholder="Enter First Name"
                 required
+                type="text"
                 onChange={(event) => setFirstName(event.target.value)}
               ></input>
               <input
                 className="w-[100%] rounded py-3 px-2"
                 placeholder="Enter Last Name"
+                type="text"
                 required
                 onChange={(event) => setLastName(event.target.value)}
               ></input>
@@ -78,6 +88,7 @@ const Registeration = () => {
               <input
                 className=" w-[100%] rounded py-3 px-2"
                 placeholder="Enter Phone Number"
+                type="tel"
                 onChange={(event) => setPhoneNumber(event.target.value)}
                 required
               ></input>
@@ -85,6 +96,7 @@ const Registeration = () => {
                 className="w-[100%] rounded py-3 px-2"
                 placeholder="Enter Email"
                 required
+                type="email"
                 onChange={(event) => setEmail(event.target.value)}
               ></input>
             </div>

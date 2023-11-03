@@ -8,13 +8,13 @@ const UserProfileLayout = (children) => {
   return (
     <main className="my-[6rem] flex gap-smallest justify-between px-smallest">
       <section className="border rounded text-center p-smallest w-[30%]">
-        <Image
+        {/* <Image
           className="rounded-full bg-white border mb-smallest ml-[40%]"
           width={100}
           height={100}
           src={children.picture}
           alt={children.name}
-        ></Image>
+        ></Image> */}
 
         <ul>
           <li className="font-bold">
@@ -25,21 +25,12 @@ const UserProfileLayout = (children) => {
             <span className="font-light">Email: </span>
             {children.email}
           </li>
-          <li className="font-bold">
-            <span className="font-light">nickname: </span>
-            {children.nickname}
-          </li>
-          <li className="font-bold">
-            <span className="font-light">Language: </span>
-
-            {children.locale}
-          </li>
         </ul>
 
         <p className="text-red-500 ">
           Orange Card Expires in 20 days from today
         </p>
-
+        <input type="datetime-local"></input>
         <div className="flex justify-around ">
           <button
             type="reset"
