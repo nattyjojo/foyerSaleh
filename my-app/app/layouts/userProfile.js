@@ -1,36 +1,38 @@
 "use client";
 
 import ListLink from "./dropDownMenu";
-
 import Image from "next/image";
 
 const UserProfileLayout = (children) => {
   return (
     <main className="my-[6rem] flex gap-smallest justify-between px-smallest">
       <section className="border rounded text-center p-smallest w-[30%]">
-        {/* <Image
-          className="rounded-full bg-white border mb-smallest ml-[40%]"
-          width={100}
-          height={100}
-          src={children.picture}
-          alt={children.name}
-        ></Image> */}
+        <div className="flex justify-around">
+          <Image
+            className="rounded-full bg-white border mb-smallest"
+            width={100}
+            height={100}
+            src={""}
+            alt={children.firstName}
+          ></Image>
+        </div>
 
         <ul>
           <li className="font-bold">
-            <span className="font-light">Name: </span>
+            <span className="font-light">
+              {children.userData.firstName + " " + children.userData.lastName}
+            </span>
             {children.name}
           </li>
           <li className="font-bold ">
-            <span className="font-light">Email: </span>
-            {children.email}
+            <span className="font-light">{children.userData.email}</span>
           </li>
         </ul>
 
         <p className="text-red-500 ">
-          Orange Card Expires in 20 days from today
+          ID Card Expires On The :
+          {children.userData.files.idCardData.expireDate}
         </p>
-        <input type="datetime-local"></input>
         <div className="flex justify-around ">
           <button
             type="reset"
@@ -44,8 +46,8 @@ const UserProfileLayout = (children) => {
       <section className="w-[70%]">
         <ul className="font-bold bg-slate-600 py-smallest px-2 rounded text-[green] flex justify-between">
           <ListLink href={"/anouncement"} content={"Anouncement"} />
-          <ListLink href={"/anouncement"} content={"Message"} />
-          <ListLink href={"/anouncement"} content={"Exit"} />
+          <ListLink href={"/anouncement"} content={"Messages"} />
+          <ListLink href={"/anouncement"} content={"Jobs"} />
         </ul>
       </section>
     </main>

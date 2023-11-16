@@ -3,8 +3,14 @@ import Header from "../components/header";
 import MainFooter from "../components/Footer";
 import ListLink from "./dropDownMenu";
 import Image from "next/image";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useState } from "react";
+import handlePost from "../lib/handlePost";
+import handleGetUsers from "../lib/handleGetUsers";
+import handleGetPosts from "../lib/handleGetPosts";
+import randomChar from "../lib/randomChar";
+import FormData from "form-data";
+import DOMPurify from "dompurify";
 
 import { FaBold, FaLink, FaImages, FaHeading } from "react-icons/fa6";
 import { GrBlockQuote } from "react-icons/gr";
@@ -12,9 +18,55 @@ import { MdFormatListNumbered, MdFormatListBulleted } from "react-icons/md";
 import { RiEmphasis } from "react-icons/ri";
 
 const AddminDashBoardLayout = (children) => {
+  const textAreaValue = useRef();
   const [currentTask, setCurrentTask] = useState();
   const [tittle, setTittle] = useState();
-  const textAreaValue = useRef();
+  const [mode, setMode] = useState();
+  const [content, setContent] = useState();
+  const [getUsers, setGetUsers] = useState(null);
+  const [getPosts, setGetPosts] = useState(null);
+  const [posts, setPosts] = useState(null);
+  const [residents, setResidents] = useState();
+  const [banner, setBanner] = useState();
+  const [bannerName, setBannerName] = useState();
+  const newFile = (event, cat) => {
+    const fileName = event.target.files[0].name;
+    const fileExtension = fileName.split(".")[1];
+    const newfileName = randomChar() + `-${cat}.` + fileExtension;
+    setBannerName(newfileName);
+    const newFile = new File([event.target.files[0]], newfileName, {
+      type: event.target.files[0].type,
+    });
+    return newFile;
+  };
+  const postFormData = new FormData();
+  postFormData.append("poster", children.data.data.firstName);
+  postFormData.append("postType", currentTask);
+  postFormData.append("title", tittle);
+  postFormData.append("content", content);
+  postFormData.append("banner", banner);
+  postFormData.append("bannerName", bannerName);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const getResident = await handleGetUsers();
+
+      setResidents(getResident.data);
+      setGetUsers(null);
+    };
+    const fetchPosts = async () => {
+      const getPosts = await handleGetPosts();
+      setPosts(getPosts.data);
+      setGetPosts(null);
+    };
+    if (getUsers) {
+      fetchUsers();
+    }
+    if (getPosts) {
+      fetchPosts();
+    }
+  }, [getUsers, getPosts]);
+
   const handleTextFormat = (event) => {
     const target = event.target.id;
     const heading = event.target.value;
@@ -44,10 +96,10 @@ const AddminDashBoardLayout = (children) => {
     } else {
       switch (target) {
         case "bold":
-          textAreaValue.current.value += '<i className="font-bold></i>';
+          textAreaValue.current.value += '<i className="font-bold"></i>';
           break;
         case "emphasis":
-          textAreaValue.current.value += '<i className="font-bold></i>';
+          textAreaValue.current.value += '<i className="font-bold"></i>';
           break;
         case "link":
           textAreaValue.current.value += '<a href=""></a>';
@@ -75,17 +127,27 @@ const AddminDashBoardLayout = (children) => {
     }
   };
   const buttonStyle =
-    "border mt-small w-[20%] font-bold rounded px-smallest py-2 text-blue-500 hover:text-inherit hover:bg-blue-900";
+    "border m-2 w-[20%] font-bold rounded px-smallest py-2 text-blue-500 hover:text-inherit hover:bg-blue-900";
   return (
     <main className="pt-[15rem] flex gap-smallest justify-between px-smallest">
       <section className="border w-[30%]">
-        <div className="p-big rounded-full bg-white">
-          {/* <Image width={100} height={100} src={children.src} alt="img"></Image> */}
+        <div className="flex justify-around">
+          {/* <Image
+            className="rounded-full bg-white border mb-smallest"
+            width={100}
+            height={100}
+            src={"http://localhost:5000/residents[0].files.idCardData.filename"}
+            alt="img"
+          ></Image> */}
         </div>
-        <h1 className="font-bold">Mike James</h1>
-        <p>Orange Card Expires in 20 days from today</p>
+        <div className="text-center">
+          <p>
+            {children.data.data.firstName + " " + children.data.data.lastName}
+          </p>
+          <p>{children.data.data.email}</p>
+        </div>
       </section>
-      <section className="w-[70%]">
+      <section className="w-[70%] ">
         <ul
           onClick={(event) => setCurrentTask(event.target.id)}
           className="font-bold bg-slate-600 py-smallest px-2 rounded text-[green] flex justify-between"
@@ -101,7 +163,7 @@ const AddminDashBoardLayout = (children) => {
               }`
             }
           >
-            Create Post
+            Create Blog Post
           </button>
           <button
             id={"aunousment"}
@@ -113,6 +175,7 @@ const AddminDashBoardLayout = (children) => {
             Create Aunousment
           </button>
           <button
+            onClick={() => setGetUsers(true)}
             id={"residents"}
             className={
               buttonStyle +
@@ -122,13 +185,14 @@ const AddminDashBoardLayout = (children) => {
             View Residents
           </button>
           <button
+            onClick={() => setGetPosts(true)}
             id={"listPosts"}
             className={
               buttonStyle +
               ` ${currentTask === "listPosts" ? "underline bg-blue-900" : ""}`
             }
           >
-            View Posts
+            View Blog Posts
           </button>
           <button
             id={"viewAnouncements"}
@@ -144,57 +208,244 @@ const AddminDashBoardLayout = (children) => {
             View Aunousment
           </button>
         </ul>
+        <section
+          className={`bg-[gray] mt-3 ${
+            currentTask === "listPosts" ? "block" : "hidden"
+          }`}
+        >
+          {/* Post */}
+
+          <table className="w-[100%] h-[20vh]">
+            <thead className="text-[blue] border-2 bg-[black]">
+              <tr className="">
+                <th>Banner</th>
+                <th>Tittle</th>
+                <th>Content</th>
+                <th>Date</th>
+                <th>Poster</th>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody className="h-[40vh] overflow-scroll">
+              {posts
+                ? posts.map((post, index) => {
+                    return post.postType === "post" ? (
+                      <tr
+                        key={index}
+                        className="text-center font-bold border border-[black] "
+                      >
+                        <td className="">
+                          <Image
+                            src={`http://localhost:5000/banner/${post.bannerName}`}
+                            alt={`${post.title}`}
+                            width={100}
+                            height={100}
+                            crossOrigin={"http://localhost:5000/admin"}
+                          />
+                        </td>
+                        <td>{post.title}</td>
+                        <td
+                          className="line-clamp-2 overflow-hidden"
+                          dangerouslySetInnerHTML={{ __html: post.content }}
+                        ></td>
+                        <td>{post.date.split("T")[0]}</td>
+                        <td>{post.poster}</td>
+                        <td>
+                          <button className="border-2 px-2 bg-[green] rounded-full font-bold">
+                            View
+                          </button>
+                        </td>
+                        <td>
+                          <button className="border-2 px-2 bg-[green] rounded-full font-bold">
+                            Edit
+                          </button>
+                        </td>
+                        <td>
+                          <button className="border-2 px-2 bg-[red]  rounded-full font-bold">
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ) : null;
+                  })
+                : null}
+            </tbody>
+          </table>
+        </section>
+        <section
+          className={`bg-[gray] mt-3 ${
+            currentTask === "viewAnouncements" ? "block" : "hidden"
+          }`}
+        >
+          {/* ANOUNSGSGSG */}
+
+          <table className="w-[100%]">
+            <thead>
+              <tr className="text-[blue] border-2 bg-[black]">
+                <th>Banner</th>
+                <th>Tittle</th>
+                <th>Content</th>
+                <th>Date</th>
+                <th>Poster</th>
+                <th></th>
+                <th></th>
+                <th></th>
+
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {posts
+                ? posts.map((post, index) => {
+                    return post.postType === "aunousment" ? (
+                      <tr key={index} className="text-center font-bold">
+                        <td>
+                          <Image
+                            src={`http://localhost:5000/banner/${post.bannerName}`}
+                            alt={`${post.title}`}
+                            width={50}
+                            height={50}
+                            crossOrigin={"http://localhost:5000/admin"}
+                          />
+                        </td>
+                        <td>{post.title}</td>
+
+                        <td>{post.content}</td>
+                        <td>{post.date.split("T")[0]}</td>
+                        <td>{post.poster}</td>
+                        <td>
+                          <button className="border-2 px-2 bg-[green] rounded-full font-bold">
+                            View
+                          </button>
+                        </td>
+                        <td>
+                          <button className="border-2 px-2 bg-[green] rounded-full font-bold">
+                            Edit
+                          </button>
+                        </td>
+                        <td>
+                          <button className="border-2 px-2 bg-[red]  rounded-full font-bold">
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ) : null;
+                  })
+                : null}
+            </tbody>
+          </table>
+        </section>
 
         <section
+          className={`bg-[gray] mt-3 ${
+            currentTask === "residents" ? "block" : "hidden"
+          }`}
+        >
+          {/* Residendnts */}
+          <table className="w-[100%]">
+            <thead>
+              <tr className="text-[blue] border-2 bg-[black]">
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Expires</th>
+                <th>ID Card</th>
+                <th></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {residents
+                ? residents.map((resident, index) => (
+                    <tr key={index} className="text-center font-bold">
+                      <td>{resident.firstName}</td>
+                      <td>{resident.lastName}</td>
+                      <td>{resident.email}</td>
+                      <td>{resident.phoneNumber}</td>
+                      <td>{resident.date.split("T")[0]}</td>
+                      <td>
+                        <Image
+                          src={`http://localhost:5000/idCards/${resident.files.idCardData.filename}`}
+                          alt="im"
+                          width={50}
+                          height={50}
+                          loading="lazy"
+                          crossOrigin="anonymous"
+                        />
+                      </td>
+                      <td>
+                        <button className="border-2 px-2 bg-[red]  rounded-full font-bold">
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                : null}
+            </tbody>
+          </table>
+        </section>
+
+        <form
+          onSubmit={(event) => {
+            console.log(event.target.value);
+            event.preventDefault();
+            handlePost(postFormData);
+          }}
           className={` ${
             currentTask === "post" || currentTask === "aunousment"
-              ? "block"
-              : "hidden"
+              ? "block mt-5"
+              : "hidden mt-5"
           }`}
         >
           <input
             onChange={(event) => setTittle(event.target.value)}
-            className="flex justify-around text-center py-2 px-3 font-bold"
+            className=" text-center py-2 px-3 w-full font-bold"
             type="text"
             placeholder="Enter Tittle"
+            required
           ></input>
-          <ul
-            className="flex mt-small"
-            onClick={(event) => handleTextFormat(event)}
-          >
+          <ul className="flex" onClick={(event) => handleTextFormat(event)}>
             <li title="Bold">
-              <button id="bold" className="border py-2 bold  px-smallest">
+              <button
+                type="button"
+                id="bold"
+                className="border py-2 bold  px-smallest"
+              >
                 <FaBold id={"bold"} />
               </button>
             </li>
             <li title="Emphasis">
-              <button className=" border py-2 bold  px-smallest">
+              <button type="button" className=" border py-2 bold  px-smallest">
                 <RiEmphasis id={"emphasis"} />
               </button>
             </li>
             <li title="Link">
-              <button className=" border py-2 bold  px-smallest">
+              <button type="button" className=" border py-2 bold  px-smallest">
                 <FaLink id={"link"} />
               </button>
             </li>
             <li title="BlockQuote">
-              <button className=" border py-2 bold  px-smallest">
+              <button type="button" className=" border py-2 bold  px-smallest">
                 <GrBlockQuote id={"blockquote"} />
               </button>
             </li>
 
             <li title="Numbered List">
-              <button className=" border py-2 bold  px-smallest">
+              <button type="button" className=" border py-2 bold  px-smallest">
                 <MdFormatListNumbered id={"numberedList"} />
               </button>
             </li>
             <li title="Bulleted List">
-              <button className=" border py-2 bold  px-smallest">
+              <button type="button" className=" border py-2 bold  px-smallest">
                 <MdFormatListBulleted id={"bulletedList"} />
               </button>
             </li>
-            <li title="Heading">
-              <select id="heading" className=" p-1 bg-black ">
+            <li className="border" title="Heading">
+              <select id="heading" className="p-1 bg-black">
+                <option id={"h"}>H</option>
                 <option id={"h1"} value={"h1"}>
                   H1
                 </option>
@@ -208,26 +459,36 @@ const AddminDashBoardLayout = (children) => {
               </select>
             </li>
             <li title="Bulleted List">
-              <button className=" border py-2 bold  px-smallest">
+              <button type="button" className=" border py-2 bold  px-smallest">
                 <MdFormatListBulleted id={"paragraph"} />
               </button>
             </li>
-            <li className="border  font-bold rounded px-6 py-1 text-blue-500 hover:text-inherit hover:bg-blue-900">
-              <button>Publish</button>
+            <input
+              onChange={(event) => {
+                const getNewFile = newFile(event, "banner");
+                setBanner(getNewFile);
+              }}
+              className="border  font-bold rounded px-6 py-1 text-blue-500 hover:text-inherit hover:bg-blue-900"
+              type="file"
+            ></input>
+            <li className="border font-bold rounded px-6 py-1 text-blue-500 hover:text-inherit hover:bg-blue-900">
+              <button type="submit">Publish</button>
             </li>
           </ul>
+
           <div>
             <textarea
+              required
               ref={textAreaValue}
+              onChange={(event) => setContent(event.target.value)}
               className="w-[100%] border h-[50vh]"
             ></textarea>
-            <li title="Upload Image" className="border-l border-b border-r ">
-              <input type="file" id="img" name="img" accept="image/*"></input>
-            </li>
           </div>
-        </section>
+        </form>
       </section>
     </main>
   );
 };
 export default AddminDashBoardLayout;
+
+// https://www.kindpng.com/picc/m/171-1712282_profile-icon-png-profile-icon-vector-png-transparent.png

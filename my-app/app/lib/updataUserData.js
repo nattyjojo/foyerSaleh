@@ -1,16 +1,15 @@
 import axios from "axios";
 const updataUserData = async (formData) => {
-  console.log({ formDatassss: formData });
-
-  const postUserData = axios.post(
+  const postUserData = await axios.post(
     "http://localhost:5000/update-user-data",
     formData,
     {
       headers: {
         "Content-Type": "multipart/form-data",
       },
-    } // application/json
+    }
   );
+  return postUserData;
 };
 
 export default updataUserData;

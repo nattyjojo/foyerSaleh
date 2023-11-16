@@ -2,11 +2,28 @@
 import { GiHamburgerMenu } from "react-icons/gi";
 import ListLink from "../layouts/dropDownMenu";
 import { CgClose } from "react-icons/cg";
-
+import validateCookie from "../lib/validateCookie";
+import { useEffect } from "react";
 import { useState } from "react";
 import { redirect, usePathname } from "next/navigation";
+import logOut from "../lib/logOut";
 
 const HamburgerButton = (children) => {
+  const [isValid, setIsvalid] = useState(null);
+  const [userType, setUserType] = useState(null);
+  useEffect(() => {
+    const isUser = async () => {
+      const validateUserCookie = await validateCookie();
+      if (validateUserCookie) {
+        setIsvalid(!isValid);
+        const userType = JSON.parse(localStorage.getItem("userType"));
+        setUserType(userType.userType);
+      }
+    };
+
+    isUser();
+  }, []);
+
   const currentPath = usePathname();
   const [isVisible, setIsVisible] = useState(true);
   const dropDownMenustyle =
@@ -16,11 +33,9 @@ const HamburgerButton = (children) => {
     setIsVisible(!isVisible);
   };
 
-  // Call the login function to initiate the login process
-  // onClick={() => handleButton()}
   return (
     <div className="z-10  font-bold">
-      <button className="text-small sm:hidden">
+      <button onClick={() => handleButton()} className="text-small sm:hidden">
         {isVisible ? <GiHamburgerMenu /> : <CgClose />}
       </button>
 
@@ -42,16 +57,46 @@ const HamburgerButton = (children) => {
           content={"About"}
           border={currentPath === "/about" ? "border-b text-blue-500 " : ""}
         />
-        <ListLink
-          href={"/login"}
-          content={"Login"}
-          border={currentPath === "/login" ? "border-b text-blue-500 " : " "}
-        />
-        <ListLink
-          href={"/register"}
-          content={"Register"}
-          border={currentPath === "/register" ? "border-b text-blue-500 " : " "}
-        />
+        {!isValid ? (
+          <ListLink
+            href={"/register"}
+            content={"Register"}
+            border={
+              currentPath === "/register" ? "border-b text-blue-500 " : ""
+            }
+          />
+        ) : (
+          <ListLink
+            href={`${"/" + userType}`}
+            content={"DashBoard"}
+            border={
+              currentPath === `${"/" + userType}`
+                ? "border-b text-blue-500 "
+                : ""
+            }
+          />
+        )}
+        {isValid ? (
+          <div
+            onClick={() => {
+              logOut();
+            }}
+          >
+            <ListLink
+              href={"/"}
+              content={"Logout"}
+              border={
+                currentPath === "/login" ? "border-b text-blue-500 " : " "
+              }
+            />
+          </div>
+        ) : (
+          <ListLink
+            href={"/login"}
+            content={"Login"}
+            border={currentPath === "/login" ? "border-b text-blue-500 " : " "}
+          />
+        )}
       </ul>
       <ul className="hidden sm:flex ">
         <ListLink
@@ -69,17 +114,47 @@ const HamburgerButton = (children) => {
           content={"About"}
           border={currentPath === "/about" ? "border-b text-blue-500 " : " "}
         />
-        <ListLink
-          href={"/login"}
-          content={"Login"}
-          border={currentPath === "/login" ? "border-b text-blue-500 " : ""}
-        />
 
-        <ListLink
-          href={"/register"}
-          content={"Register"}
-          border={currentPath === "/register" ? "border-b text-blue-500 " : ""}
-        />
+        {!isValid ? (
+          <ListLink
+            href={"/register"}
+            content={"Register"}
+            border={
+              currentPath === "/register" ? "border-b text-blue-500 " : ""
+            }
+          />
+        ) : (
+          <ListLink
+            href={`${"/" + userType.userType}`}
+            content={"DashBoard"}
+            border={
+              currentPath === `${"/" + userType.userType}`
+                ? "border-b text-blue-500 "
+                : ""
+            }
+          />
+        )}
+        {isValid ? (
+          <div
+            onClick={() => {
+              logOut();
+            }}
+          >
+            <ListLink
+              href={"/"}
+              content={"Logout"}
+              border={
+                currentPath === "/login" ? "border-b text-blue-500 " : " "
+              }
+            />
+          </div>
+        ) : (
+          <ListLink
+            href={"/login"}
+            content={"Login"}
+            border={currentPath === "/login" ? "border-b text-blue-500 " : " "}
+          />
+        )}
       </ul>
     </div>
   );

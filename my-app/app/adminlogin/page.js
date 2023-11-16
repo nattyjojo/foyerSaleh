@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import validateCookie from "../lib/validateCookie";
 
-const Login = () => {
+const AdminLogin = () => {
   const router = useRouter();
   const [showLogin, setShowLogin] = useState(false);
   const [password, setPassword] = useState();
@@ -52,22 +52,7 @@ const Login = () => {
                 const handleLoginResult = await handleLogin(loginData);
                 if (handleLoginResult.data) {
                   setShowResult(true);
-                  if (handleLoginResult.data === "user") {
-                    localStorage.setItem(
-                      "userType",
-                      JSON.stringify({ userType: "profile" })
-                    );
-
-                    router.push("/profile");
-                  } else {
-                    handleLoginResult.data === "admin";
-
-                    localStorage.setItem(
-                      "userType",
-                      JSON.stringify({ userType: "admin" })
-                    );
-                    router.push("/admin");
-                  }
+                  router.push("/profile");
                 } else {
                   setShowResult(false);
                 }
@@ -122,4 +107,4 @@ const Login = () => {
     );
   }
 };
-export default Login;
+export default AdminLogin;

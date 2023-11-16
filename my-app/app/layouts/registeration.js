@@ -13,6 +13,7 @@ const Registeration = () => {
   const [email, setEmail] = useState();
   const [submit, setSubmit] = useState(null);
   const [comfirmedPassword, setComfirmedPassword] = useState(null);
+  const [code, setCode] = useState();
 
   const signUpData = {
     password: password,
@@ -20,6 +21,7 @@ const Registeration = () => {
     lastName: lastName,
     phoneNumber: phoneNumber,
     email: email,
+    code: code,
   };
   const router = useRouter();
 
@@ -29,7 +31,7 @@ const Registeration = () => {
 
       <main className=" my-[5rem] flex justify-center ">
         <section>
-          <h1 className="font-bold text-big">Sign-Up :</h1>
+          <h1 className="font-bold text-big text-[#3b82f6]">Sign-Up :</h1>
 
           <form
             onSubmit={async (event) => {
@@ -48,13 +50,16 @@ const Registeration = () => {
             }}
             className=" border  rounded p-small"
           >
-            <h1 className="font-bold">Name</h1>
+            <h1 className="font-bold">
+              Name
+              <span className="text-[#3b82f6] text-[20px]">*</span>
+            </h1>
             <p
               className={`${
                 submit && submit === true
                   ? "block text-[green]"
                   : "" || submit === false
-                  ? "block text-[red]"
+                  ? "block text-[rgb(59, 130, 246)]"
                   : "" || submit === null
                   ? "hidden"
                   : ""
@@ -83,7 +88,10 @@ const Registeration = () => {
               ></input>
             </div>
             <br></br>
-            <h1 className="font-bold">Contact</h1>
+            <h1 className="font-bold">
+              Contact
+              <span className="text-[#3b82f6] text-[20px]">*</span>
+            </h1>
             <div className="flex gap-smallest">
               <input
                 className=" w-[100%] rounded py-3 px-2"
@@ -101,7 +109,10 @@ const Registeration = () => {
               ></input>
             </div>
             <br></br>
-            <h1 className="font-bold">Password</h1>
+            <h1 className="font-bold">
+              Password
+              <span className="text-[#3b82f6] text-[20px]">*</span>
+            </h1>
             <div className="flex gap-smallest">
               <input
                 type="password"
@@ -130,6 +141,20 @@ const Registeration = () => {
             </div>
 
             <br></br>
+            <h1 className="font-bold">
+              Code
+              <span className="text-[#3b82f6] text-[20px]">*</span>
+            </h1>
+            <div className="flex gap-smallest">
+              <input
+                className=" w-[100%] text-center rounded py-3 px-2"
+                placeholder="Enter Registeration Code"
+                type="text"
+                onChange={(event) => setCode(event.target.value)}
+                required
+              ></input>
+            </div>
+
             <div className="flex justify-around ">
               <button
                 type="submit"

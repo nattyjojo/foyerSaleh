@@ -14,7 +14,6 @@ const validateCookie = async () => {
           },
         }
       );
-      console.log({ validateUserCookie: validateUserCookie });
       return validateUserCookie;
     } catch (err) {
       console.log(err);

@@ -2,10 +2,9 @@ import axios from "axios";
 
 const getUser = async () => {
   const getCooKie = document.cookie;
-  console.log({ getCooKiesss: getCooKie });
 
-  const cookie = getCooKie.split("=")[1];
-  if (cookie) {
+  if (getCooKie) {
+    const cookie = getCooKie.split("=")[1];
     try {
       const postdata = await axios.post(
         "http://localhost:5000/get-user",
@@ -17,7 +16,6 @@ const getUser = async () => {
           },
         }
       );
-
       return postdata;
     } catch (err) {
       console.log(err);

@@ -1,36 +1,45 @@
+"use client";
 import Image from "next/image";
 import Nav from "./layouts/nav";
 import Footer from "./layouts/footer";
 import Hero from "./components/hero";
 import Slide from "./layouts/slide";
 import Card from "./components/card";
-
+import { useEffect } from "react";
+import handleGetPosts from "./lib/handleGetPosts";
+import { useState } from "react";
 import MainFooter from "./components/Footer";
 import Header from "./components/header";
+
 export default function Home() {
+  const [posts, setPosts] = useState();
+  useEffect(() => {
+    const handleFetchPost = async () => {
+      const fetchPost = await handleGetPosts();
+      setPosts(fetchPost.data);
+    };
+    handleFetchPost();
+  }, []);
   const style = {
     card: "text-center mb-small rounded p-small  font-bold text-small",
   };
   return (
     <main>
-      {/* nav bar section */}
       <Header />
 
-      {/* 
       <section className="p-smallest pt-small">
-        Hero section 
+        Hero section
         <section className={style.card}>
           <Hero />
         </section>
-         slide section 
+        slide section
         <section className={style.card}>
           <Slide />
         </section>
         <section className=" md:flex md:justify-center  gap-3  md:flex-wrap">
-          <Card />
+          {/* <Card /> */}
         </section>
-      </section> 
-       */}
+      </section>
 
       <MainFooter />
     </main>
